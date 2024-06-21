@@ -2,6 +2,13 @@ package banksimulator;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class BankCustomer { //TODO implement ability for BankCustomer to have many Accounts
     private int customerID;
@@ -9,6 +16,13 @@ public class BankCustomer { //TODO implement ability for BankCustomer to have ma
     private String fullName;
     private String email;
     private AccountType accountType;
+
+    public static ArrayList<BankCustomer> importFromBackupFile(File customerRecords) throws IOException {
+        FileReader fileReader = new FileReader(customerRecords);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayList<BankCustomer> bankCustomersList = objectMapper.readValue(fileReader, new TypeReference<ArrayList<BankCustomer>>() {});
+        return bankCustomersList;
+    }
 
     public BankCustomer(String fullName, String email, AccountType accountType, int uniqueID) {
         customerID = uniqueID;

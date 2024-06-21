@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
 public class Main {
     public static int centsFromDollarString(String dollarString) {
         StringBuilder amountCentsString = new StringBuilder();
@@ -244,13 +245,6 @@ public class Main {
         } catch (IOException e) {}
     }
 
-    public static ArrayList<BankCustomer> importFromBackupFile(File customerRecords, ArrayList<BankCustomer> bankCustomersList) throws IOException {
-        FileReader fileReader = new FileReader(customerRecords);
-        ObjectMapper objectMapper = new ObjectMapper();
-        bankCustomersList = objectMapper.readValue(fileReader, new TypeReference<ArrayList<BankCustomer>>() {});
-        return bankCustomersList;
-    }
-
     public static void main(String[] args) throws IOException {
         AccountType[] accountTypesList = new AccountType[2]; //Array that holds the two account types
         accountTypesList[0] = new AccountType(1); // Checking account
@@ -260,7 +254,7 @@ public class Main {
 
         ArrayList<BankCustomer> bankCustomersList = new ArrayList<>();
         if (customerRecords.exists()) {
-            bankCustomersList = importFromBackupFile(customerRecords, bankCustomersList);
+            bankCustomersList = BankCustomer.importFromBackupFile(customerRecords);
         }
 
         Scanner keyboard = new Scanner(System.in);

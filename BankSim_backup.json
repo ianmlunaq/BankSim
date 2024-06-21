@@ -1,6 +1,6 @@
 [ {
   "customerID" : 1,
-  "balanceCents" : 0,
+  "balanceCents" : 3000,
   "fullName" : "Ian Luna Quiroz",
   "email" : "ianmlq@duck.com",
   "accountType" : {
@@ -11,7 +11,7 @@
   "accountTypeString" : "Checking"
 }, {
   "customerID" : 2,
-  "balanceCents" : 0,
+  "balanceCents" : 1500,
   "fullName" : "John Doe",
   "email" : "jodoe@gmail.com",
   "accountType" : {
