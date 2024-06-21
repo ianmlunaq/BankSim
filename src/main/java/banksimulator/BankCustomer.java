@@ -1,6 +1,7 @@
 package banksimulator;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,8 +38,8 @@ public class BankCustomer { //TODO implement ability for BankCustomer to have ma
                         @JsonProperty("balanceCents") int balanceCents,
                         @JsonProperty("fullName") String fullName,
                         @JsonProperty("email") String email,
-                        @JsonProperty("accountType") AccountType accountType,
-                        @JsonProperty("accountTypeString") String accountTypeString) {
+                        @JsonProperty("accountType") AccountType accountType) {
+//                        @JsonProperty("accountTypeString") String accountTypeString) {
         this.customerID = customerID;
         this.balanceCents = balanceCents;
         this.fullName = fullName;
@@ -80,6 +81,7 @@ public class BankCustomer { //TODO implement ability for BankCustomer to have ma
         return accountType;
     }
 
+    @JsonIgnore
     public String getAccountTypeString() {
         return accountType.getAccountTypeString();
     }

@@ -38,9 +38,6 @@ public class MenuManager implements Initializable {
     private TableColumn<BankCustomer, Integer> balanceCents;
 
     @FXML
-    private TableColumn<BankCustomer, String> accountType;
-
-    @FXML
     private TableView<BankCustomer> table;
 
     ObservableList<BankCustomer> initialData() throws IOException {
@@ -54,7 +51,6 @@ public class MenuManager implements Initializable {
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
         fullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         balanceCents.setCellValueFactory(new PropertyValueFactory<>("balanceCents"));
-        accountType.setCellValueFactory(new PropertyValueFactory<>("accountType"));
 
         try {
             table.setItems(initialData());

@@ -1,6 +1,7 @@
 package banksimulator;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AccountType {
@@ -14,8 +15,8 @@ public class AccountType {
 
     @JsonCreator
     public AccountType(@JsonProperty("accountTypeNum") int accountTypeNum,
-                       @JsonProperty("interestRatePercent") double interestRatePercent,
-                       @JsonProperty("accountTypeString") String accountTypeString){
+                       @JsonProperty("interestRatePercent") double interestRatePercent)
+                       /*@JsonProperty("accountTypeString") String accountTypeString)*/{
         this.accountTypeNum = accountTypeNum;
         this.interestRatePercent = interestRatePercent;
     }
@@ -28,6 +29,7 @@ public class AccountType {
         return accountTypeNum;
     }
 
+    @JsonIgnore
     public String getAccountTypeString() {
         String accountTypeString;
 
