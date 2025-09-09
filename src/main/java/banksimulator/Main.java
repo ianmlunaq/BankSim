@@ -1,6 +1,5 @@
 package banksimulator;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -56,14 +55,15 @@ public class Main {
 
         int counter = 0;
         for (BankCustomer currentCustomer : bankCustomersList) {
+            BankAccount currentAccount = currentCustomer.getAccount(0);
             counter++;
             int id = currentCustomer.getCustomerID();
-            int balanceCents = currentCustomer.getBalanceCents();
+            int balanceCents = currentAccount.getBalanceCents();
             String balanceString = dollarStringFromCents(balanceCents);
             String name = currentCustomer.getFullName();
             String email = currentCustomer.getEmail();
-            String acctType = currentCustomer.getAccountTypeString();
-            double interestRate = currentCustomer.getAccountType().getInterestRatePercent();
+            String acctType = currentAccount.getAccountTypeString();
+            double interestRate = currentAccount.getInterestRatePercent();
 
             System.out.printf("""
                     ║ %8d ║ %11d ║ $%10s ║ %22s ║ %23s ║ %12s ║ %12.2f%% ║
@@ -83,13 +83,14 @@ public class Main {
                 ║ CUSTOMER ID ║   BALANCE   ║   CUSTOMER FULL NAME   ║      EMAIL ADDRESS      ║ ACCOUNT TYPE ║ INTEREST RATE ║
                 ╠═════════════╬═════════════╬════════════════════════╬═════════════════════════╬══════════════╬═══════════════╣""");
 
+        BankAccount currentAccount = currentCustomer.getAccount(0);
         int id = currentCustomer.getCustomerID();
-        int balanceCents = currentCustomer.getBalanceCents();
+        int balanceCents = currentAccount.getBalanceCents();
         String balanceString = dollarStringFromCents(balanceCents);
         String name = currentCustomer.getFullName();
         String email = currentCustomer.getEmail();
-        String acctType = currentCustomer.getAccountTypeString();
-        double interestRate = currentCustomer.getAccountType().getInterestRatePercent();
+        String acctType = currentAccount.getAccountTypeString();
+        double interestRate = currentAccount.getInterestRatePercent();
 
         System.out.printf("""
                 ║ %11d ║ $%10s ║ %22s ║ %23s ║ %12s ║ %12.2f%% ║
@@ -144,13 +145,13 @@ public class Main {
                         Continue with deposit?
                         \tYes (Y)...
                         \tNo (N)...
-                        →\s""", dollarStringFromCents(currentCustomer.getBalanceCents()), dollarStringFromCents(depositAmount), dollarStringFromCents(currentCustomer.getBalanceCents() + depositAmount));
+                        →\s""", dollarStringFromCents(currentCustomer.getAccount(0).getBalanceCents()), dollarStringFromCents(depositAmount), dollarStringFromCents(currentCustomer.getAccount(0).getBalanceCents() + depositAmount));
                 selection = keyboard.nextLine();
                 checkForExit(selection);
 
             } while (!(selection.equalsIgnoreCase("Y") || selection.equalsIgnoreCase("N")));
             if (selection.equalsIgnoreCase("Y")) {
-                currentCustomer.deposit(depositAmount);
+                currentCustomer.getAccount(0).deposit(depositAmount);
 
                 System.out.printf("""
                         \nDeposited $%s
@@ -173,7 +174,7 @@ public class Main {
 
     public static void withdrawFromBankCustomer(BankCustomer currentCustomer, boolean isSuper) throws IOException {
         Scanner keyboard = new Scanner(System.in);
-        if (!isSuper && currentCustomer.getBalanceCents() <= 0) {
+        if (!isSuper && currentCustomer.getAccount(0).getBalanceCents() <= 0) {
             System.out.print("""
                     \nCan't withdraw any money...
                     You're broke!
@@ -189,11 +190,11 @@ public class Main {
             try {
                 int withdrawAmountCents = centsFromDollarString(selection);
 
-                if (!isSuper && (withdrawAmountCents > currentCustomer.getBalanceCents())) {
+                if (!isSuper && (withdrawAmountCents > currentCustomer.getAccount(0).getBalanceCents())) {
                     System.out.printf("""
                             \nYou can't withdraw that much!...
                             Your current balance is $%s
-                            Press ENTER to continue... ⏎""", dollarStringFromCents(currentCustomer.getBalanceCents()));
+                            Press ENTER to continue... ⏎""", dollarStringFromCents(currentCustomer.getAccount(0).getBalanceCents()));
                     keyboard.nextLine();
                 } else {
                     do {
@@ -207,13 +208,13 @@ public class Main {
                                 Continue with withdrawal?
                                 \tYes (Y)...
                                 \tNo (N)...
-                                →\s""", dollarStringFromCents(currentCustomer.getBalanceCents()), dollarStringFromCents(withdrawAmountCents), dollarStringFromCents(currentCustomer.getBalanceCents() - withdrawAmountCents));
+                                →\s""", dollarStringFromCents(currentCustomer.getAccount(0).getBalanceCents()), dollarStringFromCents(withdrawAmountCents), dollarStringFromCents(currentCustomer.getAccount(0).getBalanceCents() - withdrawAmountCents));
                         selection = keyboard.nextLine();
                         checkForExit(selection);
 
                     } while (!(selection.equalsIgnoreCase("Y") || selection.equalsIgnoreCase("N")));
                     if (selection.equalsIgnoreCase("Y")) {
-                        currentCustomer.withdraw(withdrawAmountCents);
+                        currentCustomer.getAccount(0).withdraw(withdrawAmountCents);
 
                         System.out.printf("""
                                 \nWithdrew $%s
@@ -246,9 +247,9 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        AccountType[] accountTypesList = new AccountType[2]; //Array that holds the two account types
-        accountTypesList[0] = new AccountType(1); // Checking account
-        accountTypesList[1] = new AccountType(2); // Savings account
+        BankAccount[] bankAccountTypesList = new BankAccount[2]; //Array that holds the two account types
+        bankAccountTypesList[0] = new BankAccount(1); // Checking account
+        bankAccountTypesList[1] = new BankAccount(2); // Savings account
 
         File customerRecords = new File("BankSim_backup.json");
 
@@ -356,7 +357,7 @@ public class Main {
                                     if (!(selection.equalsIgnoreCase("CANCEL"))) {
                                         try {
 
-                                            BankCustomer newCustomer = new BankCustomer(newCustomerFullName, newCustomerEmail, accountTypesList[newCustomerAccountTypeNum - 1], bankCustomersList.size()+1);
+                                            BankCustomer newCustomer = new BankCustomer(newCustomerFullName, newCustomerEmail, bankAccountTypesList[newCustomerAccountTypeNum - 1], bankCustomersList.size()+1);
                                             bankCustomersList.add(newCustomer);
 
                                             writeBackupFile(customerRecords, bankCustomersList);
@@ -564,13 +565,13 @@ public class Main {
                                                                         Are you sure you want to make this change?
                                                                         \tYes (Y)...
                                                                         \tNo (N)...
-                                                                        →\s""", bankCustomersList.get(customerRecordSelection - 1).getAccountTypeString(), accountTypesList[newAccountTypeNum - 1].getAccountTypeString());
+                                                                        →\s""", bankCustomersList.get(customerRecordSelection - 1).getAccount(0).getAccountTypeString(), bankAccountTypesList[newAccountTypeNum - 1].getAccountTypeString());
                                                                 selection = keyboard.next().toUpperCase();
                                                                 checkForExit(selection);
 
                                                             } while (!(selection.charAt(0) == 'Y' || selection.charAt(0) == 'N'));
                                                             if (selection.charAt(0) == 'Y') {
-                                                                bankCustomersList.get(customerRecordSelection - 1).setAccountType(accountTypesList[newAccountTypeNum - 1]);
+                                                                bankCustomersList.get(customerRecordSelection - 1).setAccountType(bankAccountTypesList[newAccountTypeNum - 1]);
 
                                                                 writeBackupFile(customerRecords, bankCustomersList);
 
@@ -646,12 +647,12 @@ public class Main {
                                             writeBackupFile(customerRecords, bankCustomersList);
                                         }
                                         case 'E' -> {
-                                            if (currentCustomer.getBalanceCents() <= 0) {
+                                            if (currentCustomer.getAccount(0).getBalanceCents() <= 0) {
                                                 System.out.print("""
                                                         \nYou don't have a balance to earn interest on!
                                                         Press ENTER to continue... ⏎""");
                                             } else {
-                                                int preBalance = currentCustomer.getBalanceCents();
+                                                int preBalance = currentCustomer.getAccount(0).getBalanceCents();
                                                 int interest = currentCustomer.calculateInterestEarned();
                                                 System.out.printf("""
                                                                                                                 
@@ -661,7 +662,7 @@ public class Main {
                                                         ╠════════════════════════╬════════════════════════╬════════════════════════╣
                                                         ║ $%21s ║ $%21s ║ $%21s ║
                                                         ╚════════════════════════╩════════════════════════╩════════════════════════╝
-                                                        Press ENTER to continue... ⏎""", dollarStringFromCents(preBalance), dollarStringFromCents(interest), dollarStringFromCents(currentCustomer.getBalanceCents()));
+                                                        Press ENTER to continue... ⏎""", dollarStringFromCents(preBalance), dollarStringFromCents(interest), dollarStringFromCents(currentCustomer.getAccount(0).getBalanceCents()));
                                             }
                                             keyboard.nextLine();
                                             keyboard.nextLine();

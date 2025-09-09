@@ -4,21 +4,26 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AccountType {
+public class BankAccount {
     private int accountTypeNum;
     private double interestRatePercent;
+    private int balanceCents;
 
-    public AccountType(int accountTypeNum) {
+    public BankAccount(int accountTypeNum) {
         this.accountTypeNum = accountTypeNum;
         setInterestRatePercent(accountTypeNum);
+        balanceCents = 0;
     }
 
     @JsonCreator
-    public AccountType(@JsonProperty("accountTypeNum") int accountTypeNum,
-                       @JsonProperty("interestRatePercent") double interestRatePercent)
-                       /*@JsonProperty("accountTypeString") String accountTypeString)*/{
+    public BankAccount(@JsonProperty("accountTypeNum") int accountTypeNum,
+                       @JsonProperty("interestRatePercent") double interestRatePercent) {
         this.accountTypeNum = accountTypeNum;
         this.interestRatePercent = interestRatePercent;
+    }
+
+    public int getBalanceCents() {
+        return balanceCents;
     }
 
     public double getInterestRatePercent() {
@@ -60,6 +65,14 @@ public class AccountType {
 
     public void setInterestRate(double interestRate) {
         this.interestRatePercent = interestRate;
+    }
+
+    public void deposit(int depositAmount) {
+        balanceCents += depositAmount;
+    }
+
+    public void withdraw(int withdrawAmount) {
+        balanceCents -= withdrawAmount;
     }
 
     @Override
